@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -18,15 +19,15 @@ class LessonDetailView(APIView):
     def get(self, request: Request, *args, lesson_id: int, **kwargs) -> Response:
         lesson: Lesson = get_object_or_404(Lesson, id=lesson_id)
         serialized_lesson = LessonSerializer(instance=lesson)
-        return Response(serialized_lesson.data, status=200)
+        return Response(serialized_lesson.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, *args, lesson_id: int, **kwargs) -> Response:
         lesson: Lesson = get_object_or_404(Lesson, id=lesson_id)
         serialized_lesson = CollegeSerializer(instance=lesson, data=request.data)
         if serialized_lesson.is_valid():
             serialized_lesson.save()
-            return Response(serialized_lesson.data, status=200)
-        return Response(serialized_lesson.errors, status=400)
+            return Response(serialized_lesson.data, status=status.HTTP_200_OK)
+        return Response(serialized_lesson.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LessonsView(APIView):
@@ -44,8 +45,8 @@ class LessonsView(APIView):
         serialized_lessons = LessonSerializer(data=request.data)
         if serialized_lessons.is_valid():
             serialized_lessons.save()
-            return Response(serialized_lessons.data, status=201)
-        return Response(serialized_lessons.errors, status=400)
+            return Response(serialized_lessons.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_lessons.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CollegeDetailView(APIView):
@@ -57,15 +58,15 @@ class CollegeDetailView(APIView):
     def get(self, request: Request, college_id: int, *args, **kwargs) -> Response:
         college: College = get_object_or_404(College, id=college_id)
         serialized_college = CollegeSerializer(instance=college)
-        return Response(serialized_college.data, status=200)
+        return Response(serialized_college.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, *args, college_id: int, **kwargs) -> Response:
         college: College = get_object_or_404(College, id=college_id)
         serialized_college = CollegeSerializer(instance=college, data=request.data)
         if serialized_college.is_valid():
             serialized_college.save()
-            return Response(serialized_college.data, status=200)
-        return Response(serialized_college.errors, status=400)
+            return Response(serialized_college.data, status=status.HTTP_200_OK)
+        return Response(serialized_college.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CollegesView(APIView):
@@ -87,8 +88,8 @@ class CollegesView(APIView):
         serialized_college = CollegeSerializer(data=request.data)
         if serialized_college.is_valid():
             serialized_college.save()
-            return Response(serialized_college.data, status=201)
-        return Response(serialized_college.errors, status=400)
+            return Response(serialized_college.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_college.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CollegeRegister(APIView):
@@ -99,5 +100,5 @@ class CollegeRegister(APIView):
     def get(self, request: Request, *args, college_id: int, **kwargs) -> Response:
         college: College = get_object_or_404(College, id=college_id)
         msg, success = college.add_member(request.user)
-        status_code = 200 if success else 400
+        status_code = status.HTTP_200_OK if success else status.HTTP_400_BAD_REQUEST
         return Response({'detail': msg}, status=status_code)
