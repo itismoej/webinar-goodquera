@@ -5,7 +5,7 @@ from college.models import College
 
 class IsCollegeMember(BasePermission):
     """
-    Allows access only to authenticated users.
+    Allows access only to members of a college.
     """
 
     def has_permission(self, request, view):
